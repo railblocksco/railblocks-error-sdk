@@ -32,13 +32,15 @@ npm install @railblocks/error-sdk
 
 ## Quick Start
 
-### 1. Initialize the SDK
+### 1. Create a Client Instance
+
+#### Option A: Trigger.dev Transport (Default)
 
 ```typescript
-import { initErrorReporting } from '@railblocks/error-sdk';
+import { createErrorClient } from '@railblocks/error-sdk';
 
-// Initialize once at app startup
-initErrorReporting({
+// Create a client for Trigger.dev transport (default)
+const errorClient = createErrorClient({
   environment: 'production',
   defaultContext: {
     appName: 'my-awesome-app',
@@ -47,13 +49,40 @@ initErrorReporting({
 });
 ```
 
+#### Option B: HTTP Transport (For external sources)
+
+```typescript
+import { createErrorClient, createHttpErrorClient } from '@railblocks/error-sdk';
+
+// Option 1: Unified client with HTTP transport
+const errorClient = createErrorClient({
+  transport: 'http',
+  convexUrl: 'https://your-deployment.convex.cloud',
+  convexSecret: 'your-convex-api-secret',
+  environment: 'production',
+  defaultContext: {
+    appName: 'external-service',
+    version: '1.0.0'
+  }
+});
+
+// Option 2: Dedicated HTTP client
+const httpClient = createHttpErrorClient(
+  'https://your-deployment.convex.cloud',
+  'your-convex-api-secret',
+  {
+    environment: 'production',
+    maxRetries: 3,
+    timeout: 10000
+  }
+);
+```
+
 ### 2. Report Errors
 
 ```typescript
-import { reportServiceError, reportKnownError } from '@railblocks/error-sdk';
-
 // Report service error (auto-classified by AI)
-await reportServiceError(
+await errorClient.reportServiceError(
   'acme-corp',           // Company code
   'payment',             // Service name
   'Payment method declined', // Error message
@@ -61,7 +90,7 @@ await reportServiceError(
 );
 
 // Report with known error code
-await reportKnownError(
+await errorClient.reportKnownError(
   'acme-corp',
   'STRIPE-001',          // Error code
   'Payment failed',
@@ -71,24 +100,35 @@ await reportKnownError(
 
 ## API Reference
 
-### Initialization
+### Client Creation
 
 ```typescript
-initErrorReporting(options?: ErrorReportingOptions): ErrorReportingClient
+// Create Trigger.dev client (default transport)
+createErrorClient(options?: ErrorReportingOptions): ErrorReportingClient
+
+// Create HTTP client
+createHttpErrorClient(
+  convexUrl: string, 
+  convexSecret: string, 
+  options?: ErrorReportingOptions
+): HttpErrorReportingClient
 ```
 
-**Options:**
+**ErrorReportingOptions:**
+- `transport`: 'trigger' | 'http' (default: 'trigger')
+- `convexUrl`: string (required for HTTP transport)
+- `convexSecret`: string (required for HTTP transport)
 - `environment`: 'development' | 'staging' | 'production' (default: 'production')
 - `maxRetries`: number (default: 3)
 - `retryDelay`: number in ms (default: 1000)
 - `timeout`: number in ms (default: 10000)
 - `defaultContext`: Record<string, any> (default: {})
 
-### Convenience Functions
+### Client Methods
 
 ```typescript
 // Report service error (AI classification)
-reportServiceError(
+client.reportServiceError(
   companyCode: string,
   service: string,
   message: string,
@@ -96,7 +136,7 @@ reportServiceError(
 ): Promise<ErrorReportingResult>
 
 // Report known error code
-reportKnownError(
+client.reportKnownError(
   companyCode: string,
   errorCode: string,
   message: string,
@@ -104,7 +144,7 @@ reportKnownError(
 ): Promise<ErrorReportingResult>
 
 // Report with full payload
-reportError(payload: IngestErrorPayload): Promise<ErrorReportingResult>
+client.reportError(payload: IngestErrorPayload): Promise<ErrorReportingResult>
 ```
 
 ### Advanced Usage
@@ -126,6 +166,60 @@ const errorClient = createErrorClient({
 // Use the client
 await errorClient.reportServiceError('acme-corp', 'payment', 'Error message');
 ```
+
+## Transport Configuration
+
+### Trigger.dev Transport (Default)
+
+The default transport uses Trigger.dev for processing errors. This is recommended for applications that can integrate with Trigger.dev:
+
+```typescript
+import { createErrorClient } from '@railblocks/error-sdk';
+
+const errorClient = createErrorClient({
+  transport: 'trigger', // This is the default
+  environment: 'production'
+});
+```
+
+### HTTP Transport (For External Sources)
+
+For external systems that cannot use Trigger.dev, use the HTTP transport to relay errors through Convex endpoints:
+
+```typescript
+import { createErrorClient, createHttpErrorClient } from '@railblocks/error-sdk';
+
+// Option 1: Unified client with HTTP transport
+const errorClient = createErrorClient({
+  transport: 'http',
+  convexUrl: 'https://your-deployment.convex.cloud',
+  convexSecret: 'your-convex-api-secret',
+  environment: 'production'
+});
+
+// Option 2: Dedicated HTTP client
+const httpClient = createHttpErrorClient(
+  'https://your-deployment.convex.cloud',
+  'your-convex-api-secret',
+  { 
+    maxRetries: 5,
+    timeout: 15000,
+    environment: 'production'
+  }
+);
+
+await httpClient.reportServiceError('external-corp', 'api', 'Connection failed');
+```
+
+### HTTP Endpoints
+
+When using HTTP transport, errors are sent to these Convex endpoints:
+
+- `POST /report-known-error` - For errors with specific error codes
+- `POST /report-service-error` - For service errors requiring AI classification  
+- `POST /report-error` - Generic error reporting endpoint
+
+Authentication is handled automatically using the provided Convex API secret.
 
 ## Error Handling
 
@@ -188,14 +282,19 @@ export default defineConfig({
 ### React Component
 
 ```typescript
-import { reportServiceError } from '@railblocks/error-sdk';
+import { createErrorClient } from '@railblocks/error-sdk';
+
+const errorClient = createErrorClient({
+  environment: 'production',
+  defaultContext: { appName: 'acme-frontend' }
+});
 
 const PaymentForm = () => {
   const handlePayment = async () => {
     try {
       await processPayment();
     } catch (error) {
-      await reportServiceError(
+      await errorClient.reportServiceError(
         'acme-corp',
         'payment',
         error.message,
@@ -216,14 +315,19 @@ const PaymentForm = () => {
 ### Node.js/Express
 
 ```typescript
-import { reportServiceError } from '@railblocks/error-sdk';
+import { createErrorClient } from '@railblocks/error-sdk';
+
+const errorClient = createErrorClient({
+  environment: 'production',
+  defaultContext: { service: 'acme-api' }
+});
 
 app.post('/api/payment', async (req, res) => {
   try {
     const result = await stripe.paymentIntents.create(req.body);
     res.json(result);
   } catch (error) {
-    await reportServiceError(
+    await errorClient.reportServiceError(
       'acme-corp',
       'stripe',
       error.message,
@@ -241,11 +345,16 @@ app.post('/api/payment', async (req, res) => {
 ### Error Boundary (React)
 
 ```typescript
-import { reportError } from '@railblocks/error-sdk';
+import { createErrorClient } from '@railblocks/error-sdk';
+
+const errorClient = createErrorClient({
+  environment: 'production',
+  defaultContext: { component: 'ErrorBoundary' }
+});
 
 class ErrorBoundary extends React.Component {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    reportError({
+    errorClient.reportError({
       companyCode: 'acme-corp',
       service: 'react-app',
       message: error.message,

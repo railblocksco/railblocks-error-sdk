@@ -1,17 +1,34 @@
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { IngestErrorPayload, ErrorReportingResult, ErrorReportingOptions } from "./types";
+import { HttpErrorReportingClient } from "./http-client";
 
 export class ErrorReportingClient {
-  private options: Required<ErrorReportingOptions>;
+  private options: Required<Omit<ErrorReportingOptions, 'convexUrl' | 'convexSecret'>> & Pick<ErrorReportingOptions, 'convexUrl' | 'convexSecret'>;
+  private httpClient?: HttpErrorReportingClient;
   
   constructor(options: ErrorReportingOptions = {}) {
     this.options = {
+      transport: options.transport ?? 'trigger',
+      convexUrl: options.convexUrl,
+      convexSecret: options.convexSecret,
       maxRetries: options.maxRetries ?? 3,
       retryDelay: options.retryDelay ?? 1000,
       timeout: options.timeout ?? 10000,
       environment: options.environment ?? 'production',
       defaultContext: options.defaultContext ?? {}
     };
+
+    // Initialize HTTP client if using HTTP transport
+    if (this.options.transport === 'http') {
+      if (!this.options.convexUrl || !this.options.convexSecret) {
+        throw new Error("convexUrl and convexSecret are required when using HTTP transport");
+      }
+      this.httpClient = new HttpErrorReportingClient(
+        this.options.convexUrl, 
+        this.options.convexSecret, 
+        this.options
+      );
+    }
   }
 
   /**
@@ -24,6 +41,11 @@ export class ErrorReportingClient {
     message: string,
     context?: Record<string, any>
   ): Promise<ErrorReportingResult> {
+    if (this.options.transport === 'http' && this.httpClient) {
+      const result = await this.httpClient.reportKnownError(companyCode, errorCode, message, context);
+      return this.normalizeHttpResult(result);
+    }
+
     return this.reportError({
       companyCode,
       errorCode,
@@ -43,6 +65,11 @@ export class ErrorReportingClient {
     message: string,
     context?: Record<string, any>
   ): Promise<ErrorReportingResult> {
+    if (this.options.transport === 'http' && this.httpClient) {
+      const result = await this.httpClient.reportServiceError(companyCode, service, message, context);
+      return this.normalizeHttpResult(result);
+    }
+
     return this.reportError({
       companyCode,
       service,
@@ -62,7 +89,34 @@ export class ErrorReportingClient {
       environment: payload.environment ?? this.options.environment
     };
 
+    if (this.options.transport === 'http' && this.httpClient) {
+      const result = await this.httpClient.reportError(enrichedPayload);
+      return this.normalizeHttpResult(result);
+    }
+
     return this.triggerWithRetry(enrichedPayload);
+  }
+
+  /**
+   * Normalize HTTP client result to match ErrorReportingResult interface
+   */
+  private normalizeHttpResult(httpResult: any): ErrorReportingResult {
+    if (httpResult.success) {
+      return {
+        success: true,
+        groupId: httpResult.triggerId,
+        groupCode: `http-${httpResult.triggerId}`,
+        occurrenceId: httpResult.triggerId,
+        action: 'created_new' as const,
+        message: httpResult.message
+      };
+    } else {
+      return {
+        success: false,
+        error: httpResult.error as any,
+        message: httpResult.message
+      };
+    }
   }
 
   private async triggerWithRetry(payload: IngestErrorPayload): Promise<ErrorReportingResult> {

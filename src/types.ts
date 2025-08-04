@@ -39,6 +39,13 @@ export interface ErrorReportingResult {
 }
 
 export interface ErrorReportingOptions {
+  // Transport configuration
+  transport?: 'trigger' | 'http';
+  
+  // HTTP transport options
+  convexUrl?: string;        // Convex deployment URL for HTTP transport
+  convexSecret?: string;     // Convex API secret for HTTP transport
+  
   // Retry configuration
   maxRetries?: number;
   retryDelay?: number;
@@ -51,4 +58,11 @@ export interface ErrorReportingOptions {
   
   // Default context
   defaultContext?: Record<string, any>;
+}
+
+export interface HttpErrorReportingResult {
+  success: boolean;
+  triggerId?: string;
+  message?: string;
+  error?: 'VALIDATION_ERROR' | 'NETWORK_ERROR' | 'CONVEX_ERROR';
 } 
