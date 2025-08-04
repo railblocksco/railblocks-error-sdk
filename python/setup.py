@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="railblocks_error_sdk",
-    version="0.0.1",
+    version="0.0.2",
     author="Railblocks",
     author_email="team@railblocks.co",
     description="Railblocks AI-powered error reporting SDK with automatic classification and semantic similarity",

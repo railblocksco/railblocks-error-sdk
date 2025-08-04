@@ -17,7 +17,7 @@ from railblocks_error_sdk import create_http_error_client
 async def main():
     # Create client
     client = create_http_error_client(
-        convex_url="https://your-convex-deployment.convex.cloud",
+        convex_url="https://your-convex-deployment.convex.site",
         convex_secret="your-convex-api-secret"
     )
     
@@ -41,7 +41,7 @@ asyncio.run(main())
 Creates a new HTTP error reporting client.
 
 **Parameters:**
-- `convex_url` (str): Your Convex deployment URL
+- `convex_url` (str): Your Convex deployment URL (must end with `.convex.site`)
 - `convex_secret` (str): Your Convex API secret
 - `options` (ErrorReportingOptions, optional): Configuration options
 

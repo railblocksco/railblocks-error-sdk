@@ -5,6 +5,7 @@ Python implementation that mirrors the TypeScript HttpErrorReportingClient exact
 """
 
 import asyncio
+import json
 from typing import Dict, Any, Optional
 import aiohttp
 from .types import HttpErrorReportingResult, ErrorReportingOptions, IngestErrorPayload
@@ -90,6 +91,7 @@ class HttpErrorReportingClient:
     async def _make_request(self, endpoint: str, payload: Dict[str, Any]) -> HttpErrorReportingResult:
         """Make HTTP request with retry logic matching TypeScript SDK exactly."""
         last_error: Optional[Exception] = None
+        full_url = f"{self.convex_url}{endpoint}"
         
         for attempt in range(1, self.max_retries + 1):
             try:
@@ -97,17 +99,24 @@ class HttpErrorReportingClient:
                 
                 async with aiohttp.ClientSession(timeout=timeout) as session:
                     async with session.post(
-                        f"{self.convex_url}{endpoint}",
+                        full_url,
                         headers={
                             'Content-Type': 'application/json',
                             'Authorization': f'Bearer {self.convex_secret}'
                         },
                         json=payload
                     ) as response:
-                        result_data = await response.json()
+                        # Get the raw response text first to handle JSON parsing properly
+                        response_text = await response.text()
+                        
+                        try:
+                            result_data = json.loads(response_text)
+                        except Exception as json_error:
+                            raise Exception(f"Failed to parse JSON response: {json_error}")
                         
                         if not response.ok:
-                            raise Exception(f"HTTP {response.status}: {result_data.get('message', 'Unknown error')}")
+                            error_msg = f"HTTP {response.status}: {result_data.get('message', 'Unknown error')}"
+                            raise Exception(error_msg)
                         
                         return HttpErrorReportingResult(
                             success=result_data.get('success', False),
