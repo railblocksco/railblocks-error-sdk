@@ -1,0 +1,43 @@
+{
+  "name": "@railblocks/error-reporting-client",
+  "version": "0.0.1",
+  "description": "Railblocks error reporting client with AI-powered classification",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -b --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@trigger.dev/sdk": "^3.0.0"
+  },
+  "devDependencies": {
+    "@trigger.dev/sdk": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "keywords": [
+    "error-reporting",
+    "ai-classification",
+    "railblocks"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/railblocks/error-reporting-client.git"
+  },
+  "author": "Railblocks",
+  "license": "MIT"
+} 
