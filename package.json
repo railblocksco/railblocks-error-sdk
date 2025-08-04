@@ -36,7 +36,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/railblocks/error-reporting-client.git"
+    "url": "https://github.com/railblocksco/error-reporting-client.git"
   },
   "author": "Railblocks",
   "license": "MIT"
