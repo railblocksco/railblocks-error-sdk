@@ -1,7 +1,7 @@
 {
-  "name": "@railblocks/error-reporting-client",
+  "name": "@railblocks/error-sdk",
   "version": "0.0.1",
-  "description": "Railblocks error reporting client with AI-powered classification",
+  "description": "Railblocks AI-powered error reporting SDK with automatic classification and semantic similarity",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -32,11 +32,14 @@
   "keywords": [
     "error-reporting",
     "ai-classification",
-    "railblocks"
+    "semantic-similarity",
+    "error-tracking",
+    "railblocks",
+    "sdk"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/railblocksco/error-reporting-client.git"
+    "url": "https://github.com/railblocksco/railblocks-error-sdk.git"
   },
   "author": "Railblocks",
   "license": "MIT"

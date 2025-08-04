@@ -1,6 +1,6 @@
-# @railblocks/error-reporting-client
+# @railblocks/error-sdk
 
-AI-powered error reporting client for Railblocks applications. This client library provides a simple interface to report errors to the Railblocks error ingestion system with automatic AI classification, semantic similarity matching, and intelligent grouping.
+Railblocks AI-powered error reporting SDK with automatic classification, semantic similarity matching, and intelligent grouping. This SDK provides a simple interface to report errors to the Railblocks error ingestion system.
 
 ## Features
 
@@ -17,7 +17,7 @@ AI-powered error reporting client for Railblocks applications. This client libra
 
 ```bash
 # Add as submodule to your project
-git submodule add https://github.com/railblocks/error-reporting-client.git lib/error-reporting
+git submodule add https://github.com/railblocksco/railblocks-error-sdk.git lib/railblocks-error-sdk
 git submodule update --init --recursive
 
 # Install Trigger.dev SDK dependency
@@ -27,15 +27,15 @@ npm install @trigger.dev/sdk@^3.0.0
 ### Option 2: NPM Package (For internal use)
 
 ```bash
-npm install @railblocks/error-reporting-client
+npm install @railblocks/error-sdk
 ```
 
 ## Quick Start
 
-### 1. Initialize the Client
+### 1. Initialize the SDK
 
 ```typescript
-import { initErrorReporting } from '@railblocks/error-reporting-client';
+import { initErrorReporting } from '@railblocks/error-sdk';
 
 // Initialize once at app startup
 initErrorReporting({
@@ -50,7 +50,7 @@ initErrorReporting({
 ### 2. Report Errors
 
 ```typescript
-import { reportServiceError, reportKnownError } from '@railblocks/error-reporting-client';
+import { reportServiceError, reportKnownError } from '@railblocks/error-sdk';
 
 // Report service error (auto-classified by AI)
 await reportServiceError(
@@ -110,7 +110,7 @@ reportError(payload: IngestErrorPayload): Promise<ErrorReportingResult>
 ### Advanced Usage
 
 ```typescript
-import { createErrorClient } from '@railblocks/error-reporting-client';
+import { createErrorClient } from '@railblocks/error-sdk';
 
 // Create custom client instance
 const errorClient = createErrorClient({
@@ -129,7 +129,7 @@ await errorClient.reportServiceError('acme-corp', 'payment', 'Error message');
 
 ## Error Handling
 
-The client includes built-in retry logic and error handling:
+The SDK includes built-in retry logic and error handling:
 
 ```typescript
 const result = await reportServiceError('acme-corp', 'payment', 'Error');
@@ -188,7 +188,7 @@ export default defineConfig({
 ### React Component
 
 ```typescript
-import { reportServiceError } from '@railblocks/error-reporting-client';
+import { reportServiceError } from '@railblocks/error-sdk';
 
 const PaymentForm = () => {
   const handlePayment = async () => {
@@ -216,7 +216,7 @@ const PaymentForm = () => {
 ### Node.js/Express
 
 ```typescript
-import { reportServiceError } from '@railblocks/error-reporting-client';
+import { reportServiceError } from '@railblocks/error-sdk';
 
 app.post('/api/payment', async (req, res) => {
   try {
@@ -241,7 +241,7 @@ app.post('/api/payment', async (req, res) => {
 ### Error Boundary (React)
 
 ```typescript
-import { reportError } from '@railblocks/error-reporting-client';
+import { reportError } from '@railblocks/error-sdk';
 
 class ErrorBoundary extends React.Component {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
@@ -275,7 +275,7 @@ class ErrorBoundary extends React.Component {
    - Check that the key is valid for the railblocks-ops project
 
 3. **Network errors**
-   - The client includes automatic retry logic
+   - The SDK includes automatic retry logic
    - Check your internet connection and firewall settings
 
 4. **Type errors**
@@ -283,7 +283,7 @@ class ErrorBoundary extends React.Component {
 
 ## Contributing
 
-This library is part of the Railblocks ecosystem. For issues or contributions, please contact the Railblocks team.
+This SDK is part of the Railblocks ecosystem. For issues or contributions, please contact the Railblocks team.
 
 ## License
 
