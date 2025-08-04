@@ -8,7 +8,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="railblocks-error-sdk",
+    name="railblocks_error_sdk",
     version="0.0.1",
     author="Railblocks",
     author_email="team@railblocks.co",
