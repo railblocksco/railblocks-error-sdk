@@ -30,21 +30,15 @@ export interface IngestErrorPayload {
 
 export interface ErrorReportingResult {
   success: boolean;
-  groupId?: string;
-  groupCode?: string;
-  occurrenceId?: string;
-  action?: 'created_new' | 'added_to_existing' | 'matched_similar';
+  runId?: string;
   message?: string;
-  error?: 'VALIDATION_ERROR' | 'AI_ERROR' | 'CONVEX_ERROR' | 'NETWORK_ERROR';
+  error?: 'VALIDATION_ERROR' | 'NETWORK_ERROR' | 'API_ERROR';
 }
 
 export interface ErrorReportingOptions {
-  // Transport configuration
-  transport?: 'trigger' | 'http';
-  
-  // HTTP transport options
-  convexUrl?: string;        // Convex deployment URL for HTTP transport
-  convexSecret?: string;     // Convex API secret for HTTP transport
+  // Trigger.dev configuration
+  apiKey: string;         // Trigger.dev API key (required)
+  taskId?: string;        // Task ID for error ingestion (defaults to 'ingest-error')
   
   // Retry configuration
   maxRetries?: number;
@@ -58,11 +52,4 @@ export interface ErrorReportingOptions {
   
   // Default context
   defaultContext?: Record<string, any>;
-}
-
-export interface HttpErrorReportingResult {
-  success: boolean;
-  triggerId?: string;
-  message?: string;
-  error?: 'VALIDATION_ERROR' | 'NETWORK_ERROR' | 'CONVEX_ERROR';
 } 

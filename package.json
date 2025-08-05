@@ -1,42 +1,19 @@
 {
-  "name": "@railblocks/error-sdk",
-  "version": "0.0.1",
-  "description": "Railblocks AI-powered error reporting SDK with automatic classification and semantic similarity",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
+  "name": "railblocks-error-sdk",
+  "version": "0.0.3",
+  "description": "Railblocks Error SDK - Monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
   "scripts": {
-    "build": "tsc -b",
-    "dev": "tsc -b --watch",
-    "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build"
-  },
-  "peerDependencies": {
-    "@trigger.dev/sdk": "^3.0.0"
+    "build": "npm run build --workspaces",
+    "clean": "npm run clean --workspaces",
+    "dev": "npm run dev --workspaces"
   },
   "devDependencies": {
-    "@trigger.dev/sdk": "^3.0.0",
     "typescript": "^5.0.0"
   },
-  "publishConfig": {
-    "access": "restricted"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
-    }
-  },
-  "keywords": [
-    "error-reporting",
-    "ai-classification",
-    "semantic-similarity",
-    "error-tracking",
-    "railblocks",
-    "sdk"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/railblocksco/railblocks-error-sdk.git"
