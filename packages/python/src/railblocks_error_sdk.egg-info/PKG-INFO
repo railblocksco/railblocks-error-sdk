@@ -1,3 +1,17 @@
+Metadata-Version: 2.4
+Name: railblocks-error-sdk
+Version: 0.0.3
+Summary: Python error reporting SDK using Trigger.dev HTTP API
+Author-email: Railblocks <team@railblocks.co>
+License: MIT
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: aiohttp>=3.8.0
+
 # railblocks-error-sdk
 
 Python error reporting SDK using Trigger.dev HTTP API.
@@ -50,6 +64,8 @@ asyncio.run(main())
 
 ### Modal Integration
 
+To use this SDK in Modal, add it to your Modal image:
+
 ```python
 from modal import Image, App
 
@@ -59,26 +75,19 @@ SDK_PATH = "lib/railblocks-error-sdk"
 image = (
     Image.debian_slim(python_version="3.12")
     .pip_install_from_requirements("requirements.txt")
-    .add_local_dir("lib/railblocks-error-sdk", "/tmp/sdk", copy=True)
+    .add_local_dir(SDK_PATH, "/tmp/sdk", copy=True)
     .run_commands("pip install -e /tmp/sdk/packages/python")
 )
 
 app = App("my-app", image=image)
 
-# Usage
 @app.function()
 def my_function():
     from railblocks_error_sdk import create_error_client, ErrorReportingOptions
     
     client = create_error_client(ErrorReportingOptions(environment='production'))
-    await client.report_service_error('acme-corp', 'payment', 'Payment failed')
+    # Use the client...
 ```
-
-**Local Development:**
-```bash
-cd lib/railblocks-error-sdk/packages/python && pip install -e .
-```
-Then set IDE interpreter to `./.venv/bin/python`
 
 ## Environment Setup
 
@@ -148,7 +157,18 @@ pip install -e .
 python3 test_client.py
 ```
 
+### Local Setup for Modal Development
 
+To test the SDK locally before deploying to Modal:
+
+```bash
+# Install the SDK in your local environment
+cd lib/railblocks-error-sdk/packages/python
+pip install -e .
+
+# Test imports
+python -c "from railblocks_error_sdk import create_error_client; print('SDK ready!')"
+```
 
 ## License
 

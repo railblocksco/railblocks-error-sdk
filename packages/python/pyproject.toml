@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "railblocks-error-sdk"
+version = "0.0.3"
+description = "Python error reporting SDK using Trigger.dev HTTP API"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Railblocks", email = "team@railblocks.co"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "aiohttp>=3.8.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"] 
