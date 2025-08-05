@@ -8,7 +8,7 @@ This is a git submodule. Add it to your project:
 
 ```bash
 # Add the submodule to your project
-git submodule add https://github.com/railblocksco/railblocks-error-sdk.git
+git submodule add https://github.com/railblocksco/railblocks-error-sdk.git lib/railblocks-error-sdk
 ```
 
 ### Updating the Submodule
@@ -17,7 +17,7 @@ To get the latest version of the SDK:
 
 ```bash
 # Update to the latest commit
-git submodule update --remote railblocks-error-sdk
+git submodule update --remote lib/railblocks-error-sdk
 ```
 
 ## Quick Start
@@ -90,14 +90,14 @@ export TRIGGER_SECRET_KEY=tr_dev_your_api_key
 
 ### Adding to a New Project
 ```bash
-git submodule add https://github.com/railblocksco/railblocks-error-sdk.git
+git submodule add https://github.com/railblocksco/railblocks-error-sdk.git lib/railblocks-error-sdk
 git submodule update --init --recursive
 ```
 
 ### Updating in Existing Project
 ```bash
-git submodule update --remote railblocks-error-sdk
-git add railblocks-error-sdk
+git submodule update --remote lib/railblocks-error-sdk
+git add lib/railblocks-error-sdk
 git commit -m "Update SDK"
 ```
 
@@ -139,7 +139,7 @@ Since this is a git submodule, you can work on the SDK directly:
 
 ```bash
 # Navigate to the Python package
-cd railblocks-error-sdk/packages/python
+cd lib/railblocks-error-sdk/packages/python
 
 # Install in editable mode
 pip install -e .
