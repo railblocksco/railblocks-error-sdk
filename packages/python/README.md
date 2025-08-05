@@ -30,8 +30,8 @@ from railblocks_error_sdk import create_error_client, ErrorReportingOptions
 async def main():
     client = create_error_client(ErrorReportingOptions(environment='production'))
     
-    # Report service error (AI classification)
-    await client.report_service_error(
+    # Report unknown error (AI classification)
+    await client.report_unknown_error(
         'acme-corp',
         'payment',
         'Payment method declined',
@@ -39,7 +39,7 @@ async def main():
     )
     
     # Report known error code
-    await client.report_known_error(
+    await client.report_error(
         'acme-corp',
         'STRIPE-001',
         'Payment failed'
@@ -71,7 +71,7 @@ def my_function():
     from railblocks_error_sdk import create_error_client, ErrorReportingOptions
     
     client = create_error_client(ErrorReportingOptions(environment='production'))
-    await client.report_service_error('acme-corp', 'payment', 'Payment failed')
+    await client.report_unknown_error('acme-corp', 'payment', 'Payment failed')
 ```
 
 **Local Development:**
@@ -123,14 +123,14 @@ from railblocks_error_sdk import create_error_client, ErrorReportingOptions
 ### Methods
 
 ```python
-# Report service error (AI classification)
-client.report_service_error(company_code, service, message, context?)
+# Report unknown error (AI classification)
+client.report_unknown_error(company_code, service, message, context?)
 
 # Report known error code
-client.report_known_error(company_code, error_code, message, context?)
+client.report_error(company_code, error_code, message, context?)
 
 # Report with full payload
-client.report_error(payload: IngestErrorPayload)
+client.report(payload: IngestErrorPayload)
 ```
 
 ## Development

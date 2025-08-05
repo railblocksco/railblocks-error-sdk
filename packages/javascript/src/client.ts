@@ -22,13 +22,13 @@ export class ErrorReportingClient {
   /**
    * Report an error with a known error code
    */
-  async reportKnownError(
+  async reportError(
     companyCode: string,
     errorCode: string,
     message: string,
     context?: Record<string, any>
   ): Promise<ErrorReportingResult> {
-    return this.reportError({
+    return this.report({
       companyCode,
       errorCode,
       message,
@@ -38,15 +38,15 @@ export class ErrorReportingClient {
   }
 
   /**
-   * Report a service error for automatic classification
+   * Report an unknown error for AI classification
    */
-  async reportServiceError(
+  async reportUnknownError(
     companyCode: string,
     service: string,
     message: string,
     context?: Record<string, any>
   ): Promise<ErrorReportingResult> {
-    return this.reportError({
+    return this.report({
       companyCode,
       service,
       message,
@@ -58,7 +58,7 @@ export class ErrorReportingClient {
   /**
    * Report an error with full context
    */
-  async reportError(payload: IngestErrorPayload): Promise<ErrorReportingResult> {
+  async report(payload: IngestErrorPayload): Promise<ErrorReportingResult> {
     // Only include non-undefined fields to match Python behavior
     const enrichedPayload: any = {
       companyCode: payload.companyCode,

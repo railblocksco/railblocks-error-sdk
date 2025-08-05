@@ -32,7 +32,7 @@ class ErrorReportingClient:
         
         self.task_id = options.task_id or 'ingest-error'
     
-    async def report_known_error(
+    async def report_error(
         self,
         company_code: str,
         error_code: str,
@@ -48,16 +48,16 @@ class ErrorReportingClient:
             environment=self.environment
         )
         
-        return await self.report_error(payload)
+        return await self.report(payload)
     
-    async def report_service_error(
+    async def report_unknown_error(
         self,
         company_code: str,
         service: str,
         message: str,
         context: Optional[Dict[str, Any]] = None
     ) -> ErrorReportingResult:
-        """Report a service error for automatic classification."""
+        """Report an unknown error for AI classification."""
         payload = IngestErrorPayload(
             company_code=company_code,
             service=service,
@@ -66,9 +66,9 @@ class ErrorReportingClient:
             environment=self.environment
         )
         
-        return await self.report_error(payload)
+        return await self.report(payload)
     
-    async def report_error(self, payload: IngestErrorPayload) -> ErrorReportingResult:
+    async def report(self, payload: IngestErrorPayload) -> ErrorReportingResult:
         """Report an error with full context."""
         # Convert Python dataclass to dict for JSON serialization
         # Only include non-None fields to match TypeScript behavior

@@ -19,7 +19,7 @@ npm install @railblocks/error-sdk
 import { createErrorClient } from '@railblocks/error-sdk';
 
 const client = createErrorClient({ environment: 'production' });
-await client.reportServiceError('company', 'service', 'Error message');
+await client.reportUnknownError('company', 'service', 'Error message');
 ```
 
 ### Python
@@ -34,7 +34,7 @@ from railblocks_error_sdk import create_error_client
 
 async def main():
     client = create_error_client({'environment': 'production'})
-    await client.report_service_error('company', 'service', 'Error message')
+    await client.report_unknown_error('company', 'service', 'Error message')
 
 asyncio.run(main())
 ```

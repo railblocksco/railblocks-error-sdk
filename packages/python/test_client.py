@@ -36,9 +36,9 @@ async def test_error_reporting():
     client = create_error_client(options)
     
     try:
-        # Test 1: Report a service error (AI classification)
-        print("\n1. Testing service error reporting...")
-        result1 = await client.report_service_error(
+        # Test 1: Report an unknown error (AI classification)
+        print("\n1. Testing unknown error reporting...")
+        result1 = await client.report_unknown_error(
             company_code='lh',
             service='payment',
             message='Payment method declined',
@@ -48,7 +48,7 @@ async def test_error_reporting():
         
         # Test 2: Report a known error code
         print("\n2. Testing known error reporting...")
-        result2 = await client.report_known_error(
+        result2 = await client.report_error(
             company_code='lh',
             error_code='STRIPE-001',
             message='Payment failed',
@@ -67,7 +67,7 @@ async def test_error_reporting():
             tags=['database', 'timeout'],
             context={'query': 'SELECT * FROM users'}
         )
-        result3 = await client.report_error(payload)
+        result3 = await client.report(payload)
         print(f"Result: {result3}")
         
         print("\n✅ All tests completed successfully!")

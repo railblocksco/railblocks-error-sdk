@@ -27,8 +27,8 @@ import { createErrorClient } from './railblocks-error-sdk/packages/javascript/sr
 
 const client = createErrorClient({ environment: 'production' });
 
-// Report service error
-await client.reportServiceError(
+// Report unknown error (AI classification)
+await client.reportUnknownError(
   'acme-corp',
   'payment',
   'Payment method declined',
@@ -36,7 +36,7 @@ await client.reportServiceError(
 );
 
 // Report known error
-await client.reportKnownError(
+await client.reportError(
   'acme-corp',
   'STRIPE-001',
   'Payment failed'
@@ -85,14 +85,14 @@ import { createErrorClient } from './railblocks-error-sdk/packages/javascript/sr
 ### Methods
 
 ```typescript
-// Report service error (AI classification)
-client.reportServiceError(companyCode, service, message, context?)
+// Report unknown error (AI classification)
+client.reportUnknownError(companyCode, service, message, context?)
 
 // Report known error code
-client.reportKnownError(companyCode, errorCode, message, context?)
+client.reportError(companyCode, errorCode, message, context?)
 
 // Report with full payload
-client.reportError(payload: IngestErrorPayload)
+client.report(payload: IngestErrorPayload)
 ```
 
 ## Development
